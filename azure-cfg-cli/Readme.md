@@ -17,7 +17,7 @@ all the subscriptions in the tenant that is to be monitored.
 - userName: The email of the user
 - Password: The password of the user
 - tenantId: The tenant Id of the Ad in which the App is to be created.
-- updatePermissionsForExistingApp:  true or false. If there already an app created, the user set it to true in if he has any existing subscriptions that he needs to monitor. Does not create new credentials if there is an existing App.
+- updatePermissionsForExistingApp:  true or false. If there already an app created, the user can set this to true to add new subscriptions that he needs to monitor. Does not create new credentials if there is an existing App.
 - tenantId: The tenant Id of the AD.
 - subscriptionList: The user can provide a subset of subscriptions ids or names
 - allSubscriptions: true or false. If set to true all subscriptions will be considered and the subscriptionList will be ignored
