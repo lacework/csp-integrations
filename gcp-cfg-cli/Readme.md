@@ -60,7 +60,7 @@ It does not create a new service account key for an existing service account.
     If the user grants consent to the application, the CLI will modify the project or Org IAM policy, depending on the ID_TYPE.
 ### Interactive
 
-####Command
+#### Command
 ```./run.sh  --mode interactive```
 The service account credentials file needs to be in the path ```client/sa_credentials.json```
 
