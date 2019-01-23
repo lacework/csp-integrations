@@ -36,7 +36,7 @@ They are not registered by default. In order for the to access information relat
 ##### Command:
 ```./run.sh --mode CONFIG_FILE```
 In this mode the user place the config at the following path:
- ```/home/azure-cfg-client/client/config.json```
+ ```client/config.json```
 in the container in the following format:
 ```
     {
