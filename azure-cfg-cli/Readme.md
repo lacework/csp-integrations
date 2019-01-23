@@ -26,7 +26,7 @@ They are not registered by default. In order for the to access information relat
 ### AppModes
 #### Interactive
 ##### Command:
-```docker run --interactive --tty lacework/azure-cfg-cli:latest --mode INTERACTIVE ```
+```./run.sh --mode INTERACTIVE ```
 - In the interactive Mode the Cli will prompt the user to enter the necessary details.
 - It will also ask the user to review entered details before beginning to execute the App Creation.
 - Enter exit if you need to abort on any input prompt.
@@ -34,8 +34,10 @@ They are not registered by default. In order for the to access information relat
 - It will detect if an app already exists and prompt you if you need to update an App.
 #### Config File
 ##### Command:
-```docker run -v '<local_path>:/home/azure-cfg-client/client/config.json' lacework/azure-cfg-cli:latest --mode CONFIG_FILE```
-In this mode the user will have mount a config file inside the container in the following format
+```./run.sh --mode CONFIG_FILE```
+In this mode the user place the config at the following path:
+ ```/home/azure-cfg-client/client/config.json```
+in the container in the following format:
 ```
     {
      "credentials": {
