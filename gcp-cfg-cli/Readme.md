@@ -31,6 +31,9 @@ Integration Service Account has the following roles at the Project Level:
 ### Requirements of the Service Account Project
 The project must have the following API enabled.
 - iam.googleapis.com
+### Script Requirements
+- Requirements specified in the requirement.txt
+- Python 2.7.10
 ### Script Output
 The cli creates a Service Account with email  lacework-cfg-sa@<projectid>.iam.gserviceaccount.com in the specified project.
 It does not create a new service account key for an existing service account.

@@ -10,6 +10,9 @@ all the subscriptions in the tenant that is to be monitored.
 - Restricted access to the Windows Active Directory API.(Read Directory Data access)
 - Reader role for all subscriptions that the user wants to monitor
 - List keys and list secrets for all the Keys and secrets in the keyvault
+### Script Requirements
+- Requirements specified in the requirement.txt
+- Python 2.7.10
 ### Required Params
 - userName: The email of the user
 - Password: The password of the user
