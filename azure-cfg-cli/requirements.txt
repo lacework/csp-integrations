@@ -1,0 +1,4 @@
+azure==4.0.0
+azure-mgmt-storage==2.0.0
+jsonschema==2.6.0
+prettytable==0.7.2

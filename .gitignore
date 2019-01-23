@@ -1,0 +1,22 @@
+.DS_Store
+*.vim
+*.swp
+build/*
+*~
+.idea
+*.class
+.mtj.tmp/
+*.jar
+*.war
+*.ear
+hs_err_pid*
+*.iml
+*.pyc
+target
+gcp-cfg-cli/env/
+azure-cfg-cli/env/
+#Start of eclipse and jooq config files
+.project
+.settings/
+.classpath
+#End of eclipse and jooq config files

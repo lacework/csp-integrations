@@ -1,0 +1,12 @@
+{
+  "credentials": {
+    "userName": "",
+    "password": ""
+  },
+  "clientSecret": "",
+  "updatePermissionsForExistingApp": true,
+  "tenantId": "",
+  "subscriptionList": [],
+  "allSubscriptions": true,
+  "registerProviders": false
+}

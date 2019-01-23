@@ -1,0 +1,8 @@
+{
+  "credentials_file_path": "",
+  "id_type": "ORGANIZATION",
+  "id": "",
+  "service_account_project_id": "",
+  "enable_api": true,
+  "set_iam_policy": false
+}

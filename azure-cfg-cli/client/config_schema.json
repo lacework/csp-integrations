@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "clientSecret": {
+      "type": "string",
+      "minLength": 10
+    },
+    "tenantId": {
+        "type": "string",
+        "minLength": 5
+    },
+    "subscriptionList": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "allSubscriptions": {
+      "type": "boolean"
+    },
+    "updatePermissionsForExistingApp": {
+      "type": "boolean"
+    },
+    "registerProviders": {
+      "type": "boolean"
+    },
+    "credentials": {
+      "type": "object",
+      "properties": {
+         "userName" : {
+           "type": "string"
+         },
+         "password" : {
+           "type": "string"
+         }
+
+      },
+      "required": [
+        "userName",
+        "password"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": true,
+  "required": [
+    "credentials",
+    "tenantId",
+    "updatePermissionsForExistingApp",
+    "subscriptionList",
+    "allSubscriptions",
+    "registerProviders"
+  ]
+}
