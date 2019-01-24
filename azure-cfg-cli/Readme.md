@@ -13,6 +13,7 @@ all the subscriptions in the tenant that is to be monitored.
 ### Script Requirements
 - Requirements specified in the requirement.txt
 - Python 2.7.10
+- Linux or Unix based OS
 ### Required Params
 - userName: The email of the user
 - Password: The password of the user

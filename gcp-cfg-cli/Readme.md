@@ -37,6 +37,7 @@ It does not create a new service account key for an existing service account.
 # Script Requirements
 - Requirements specified in the requirement.txt
 - Python 2.7.10
+- Linux or Unix based OS
 # CLI Command
 ### Script Parameters
 - ID_TYPE
