@@ -24,7 +24,7 @@ all the subscriptions in the tenant that is to be monitored.
 - registerProviders: true or false. The App requires access to the following providers:
     - Microsoft.KeyVault
     - Microsoft.Storage
-They are not registered by default. In order for the to access information related to these providers, the app needs to have access to their APIs. The app cannot be granted permission to access these APIs unless the providers are registered.  If the user chooses not to register them at that moment, he will have to give consent to the App later when he does register them.
+    They are not registered by default. In order for the to access information related to these providers, the app needs to have access to their APIs. The app cannot be granted permission to access these APIs unless the providers are registered.  If the user chooses not to register them at that moment, he will have to give consent to the App later when he does register them.
 
 ### AppModes
 #### Interactive
@@ -40,7 +40,7 @@ They are not registered by default. In order for the to access information relat
 ```./run.sh --mode CONFIG_FILE```
 In this mode the user place the config at the following path:
  ```client/config.json```
-in the container in the following format:
+in the following format:
 ```
     {
      "credentials": {
