@@ -23,9 +23,11 @@ class ConfigParser(object):
         config_data = ConfigParser.parseConfig(configFile)
         userName = str(config_data["credentials"]["userName"])
         password = str(config_data["credentials"]["password"])
-        clientSecret =  str(config_data["clientSecret"])
+        clientSecret =  config_data.get("clientSecret")
         if clientSecret == None:
             clientSecret = str(uuid.uuid4())
+        else:
+            clientSecret = str(clientSecret)
         tenantId = str(config_data["tenantId"])
         subscriptionList = config_data["subscriptionList"]
         allSubscriptions = config_data["allSubscriptions"]
