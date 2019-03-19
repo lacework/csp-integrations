@@ -10,17 +10,17 @@ from util.config import Config
 import logging, json
 import time
 APP_NAME = "LaceworkSAAudit"
-
+from util.credentials.credentials_provider import   CREDENTIALS_TYPE_APP, CREDENTIALS_TYPE_PORTAL
+from util.credentials.credentials_provider import  KEY_CLIENT_SECRET, KEY_APP_ID
 
 class AppManager(object):
-    def __init__(self, userName, password, clientSecret, config, registerProviders):
+    def __init__(self, config, registerProviders):
         if not isinstance(config, Config):
             raise Exception("Invalid Config Object")
         self.__registerProviders = registerProviders
         self.__config = config
-        self.__clientSecret = clientSecret
-        self.__credentialsProvider = CredentialsProviderFactory.getUserCredentialsProvider(userName, password,
-                                                                                           config)
+        self.__clientSecret = config.getUserClientSecret()
+        self.__credentialsProvider = CredentialsProviderFactory.getCredentialsProvider(config)
         self.__appUtil = AppUtil(self.__credentialsProvider)
         self.__grantUtil = GrantUtil(self.__credentialsProvider)
         self.__validatorUtil = ValidatorUtil(self.__credentialsProvider)
@@ -41,11 +41,17 @@ class AppManager(object):
         self.__createOrUpdateApp()
 
         if not appExists:
-            self.__testCredentials()
+            if self.__config.getCredentials().get('type') != CREDENTIALS_TYPE_PORTAL:
+                self.__testCredentials()
+            else:
+                logging.info("Skipping credentials test as it requires permissions to be granted to the App via the UI")
         else:
             logging.info("App Updated Successfully. New Client Secret Not generated")
             self.__clientSecret = None
         self.__printCredentials()
+        if not appExists and self.__config.getCredentials().get('type') == CREDENTIALS_TYPE_PORTAL:
+            logging.info("Please remember to grant permissions for API access to the App " + APP_NAME + " before using credentials.")
+
 
     def __registerProvider(self):
         self.__providerUtil.registerProvider()
@@ -53,7 +59,11 @@ class AppManager(object):
     def __createOrUpdateApp(self):
         self.__validatorUtil.validateUserPermissions()
         appId = self.__appUtil.createAppIfNotExist(self.__clientSecret, APP_NAME);
-        self.__grantUtil.grantPermission(appId);
+
+        if self.__config.getCredentials().get('type') != CREDENTIALS_TYPE_PORTAL:
+            self.__grantUtil.grantPermission(appId);
+        else:
+            logging.info("Skipping permissions grant as portal credentials do not have required permissions")
         roleUtil = RoleUtil(appId, self.__credentialsProvider)
         roleUtil.makeRoleAssignments()
         keyVaultUtil = KeyVaultUtil(self.__credentialsProvider)
@@ -64,19 +74,22 @@ class AppManager(object):
         for i in range(1,5):
             try:
                 appId = self.__appUtil.getAppId()
-                appCredentialsProvider = CredentialsProviderFactory.getAppCredentialsProvider(appId,
-                                                                                              self.__clientSecret,
-                                                                                              self.__config)
+
+                credentials = {"type": CREDENTIALS_TYPE_APP, KEY_APP_ID: appId, KEY_CLIENT_SECRET : self.__clientSecret}
+
+                config = Config(credentials, None, [], True, self.__config.getTenantId(), None, self.__config.getCloudType().name, [], False)
+
+                appCredentialsProvider = CredentialsProviderFactory.getCredentialsProvider(config)
                 credentialsTestUtil = CredentialsTestUtil(appCredentialsProvider)
                 credentialsTestUtil.listKeys()
                 exception = None
                 break
             except Exception as e:
-                logging.warn("Error testing credentials: Retrying test" + str(e.message))
+                logging.exception("Error testing credentials: Retrying test" + str(e.message))
                 exception = e
                 time.sleep(5)
         if exception != None:
-            logging.error("Error testing credentials: " + exception)
+            logging.error("Error testing credentials: " + exception.message)
 
     def __printCredentials(self):
         appId = self.__appUtil.getAppId()

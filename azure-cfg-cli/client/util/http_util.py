@@ -61,7 +61,6 @@ class TenantUtil(HttpUtil):
         self.__credentials = credentials
         self.__tenantId = tenantId
 
-
     def getAdProperties(self):
         tenantId =  self.__tenantId
         try:
@@ -72,8 +71,8 @@ class TenantUtil(HttpUtil):
                                          access_token, client_request_id, 200)
             logging.info("Successfully Fetched tenant Description for tenantId: " + tenantId)
         except:
-            logging.exception("Error fetching tenant properties: " + tenantId)
-            raise
+            # logging.exception("Error fetching tenant properties: " + tenantId)
+            return None
 
 
 

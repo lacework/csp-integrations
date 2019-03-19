@@ -7,8 +7,8 @@
       "minLength": 10
     },
     "tenantId": {
-        "type": "string",
-        "minLength": 5
+      "type": "string",
+      "minLength": 5
     },
     "subscriptionList": {
       "type": "array",
@@ -27,20 +27,48 @@
     },
     "credentials": {
       "type": "object",
-      "properties": {
-         "userName" : {
-           "type": "string"
-         },
-         "password" : {
-           "type": "string"
-         }
-
-      },
-      "required": [
-        "userName",
-        "password"
-      ],
-      "additionalProperties": false
+      "oneof": [
+        {
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "USER_PASS"
+              ]
+            },
+            "userName": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "userName",
+            "password"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "CLI", "PORTAL"
+              ]
+            },
+            "userName": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "userName"
+          ],
+          "additionalProperties": false
+        }
+      ]
     }
   },
   "additionalProperties": true,

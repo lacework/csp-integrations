@@ -1,16 +1,19 @@
 from msrestazure.azure_active_directory import UserPassCredentials
-from util.credentials.credentials_provider import UserPasswordCredentialsProvider
+from util.credentials.credentials_provider import CredentialsProviderFactory
 from util.app_util import AppUtil
 from app_manager import AppManager
 from azure.mgmt.resource import SubscriptionClient
 from config_parser import PROVIDER_REGISTRATION_LIST
 from config_parser import IDENTIFIER_URL
 import uuid
+import logging
 from prettytable import PrettyTable
 from util.http_util import TenantUtil
 from util.config import Config
 import getpass
 from config_parser import IDENTIFIER_URL
+from util.credentials.credentials_provider import CREDENTIALS_TYPE_USER_PASS
+from util.credentials.credentials_provider import KEY_USERNAME, KEY_PASSWORD
 
 PURPLE = '\033[95m'
 CYAN = '\033[96m'
@@ -33,24 +36,20 @@ def printBold(text):
 
 
 class InteractiveClient(object):
-    def __init__(self, cloudType):
+    def __init__(self, authType, cloudType):
         self.__cloudType = cloudType
         self.__managementResource = cloudType.endpoints.management
         self.__graphResource = cloudType.endpoints.active_directory_graph_resource_id
-        self.__userName = None
-        self.__password = None
         self.__tenantIdList = []
-        self.__tenantId = None
         self.__tenantObject = None
-        self.__subScriptionIdList = []
         self.__subscriptionClient = None
         self.__subscriptionList = []
         self.__selectedSubscriptionList = []
         self.__registerProviders = None
-        self.__clientSecret = str(uuid.uuid4())
         self.__allSubscriptions = False
-        self.__updateApp = False
-
+        self.__authType = authType
+        self.__config = Config(None, str(uuid.uuid4()), [], True, None, IDENTIFIER_URL, self.__cloudType.name, [], False)
+        self.__credentials = None
     def __getInput(self, line):
         name = raw_input(line + ": ")
         type(name)
@@ -79,7 +78,7 @@ class InteractiveClient(object):
             self.__getNumberInput(line)
 
     def run(self):
-        self.getUserNamePassword()
+        self.getUserNamePasswordCredentials()
         # self.getClientSecret()
         self.selectTenants()
         self.getUpdateApp()
@@ -93,25 +92,27 @@ class InteractiveClient(object):
             exit(1)
         self.runApp()
 
-    def getUserNamePassword(self):
-        self.__userName = self.__getInput("Enter UserName")
-        self.__password = self.__getPasswordInput("Enter Password")
+    def getUserNamePasswordCredentials(self):
+        credentials = {"type": self.__authType}
+        credentials[KEY_USERNAME] = self.__getInput("Enter UserName")
+        if self.__authType == CREDENTIALS_TYPE_USER_PASS:
+            credentials[KEY_PASSWORD] = self.__getPasswordInput("Enter Password")
+        self.__credentials = credentials
+        self.__config.setCredentials(credentials)
+
 
     def getUpdateApp(self):
-        config = Config([], True, str(self.__tenantId), IDENTIFIER_URL, self.__cloudType.name, [], True);
-
-        credentialsProvider = UserPasswordCredentialsProvider(self.__userName, self.__password, config);
+        credentialsProvider = CredentialsProviderFactory.getCredentialsProvider(self.__config);
         appUtil = AppUtil(credentialsProvider)
         appId = appUtil.getAppId()
 
         if appId!=None:
             print "\n\nYou already have a Lacework App Setup"
-            self.__updateApp = self.getYesNoPrompt("Do You Want to update an existing app? (YES/NO)")
-            if not self.__updateApp:
+            self.__config.setIsUpdateApp(self.getYesNoPrompt("Do You Want to update an existing app? (YES/NO)"))
+            if not self.__config.isUpdateApp():
                 print "Please delete the existing App to create a new one. Aborting for now..."
                 exit(1)
-        else:
-            self.__updateApp = False
+
 
     def getClientSecret(self):
         name = raw_input("Get Client Secret (Optional). Not used for existing Apps: ")
@@ -131,7 +132,7 @@ class InteractiveClient(object):
         printBold("\n\nSelected Subscriptions: ")
         self.printSubscriptions(self.__selectedSubscriptionList)
         printBold("\n\nUpdate Permission for existing App: ")
-        print str(self.__updateApp)
+        print str(self.__config.isUpdateApp())
         if len(self.__selectedSubscriptionList) > 0:
             printBold("\n\nProviders Required")
             self.printProviders()
@@ -171,7 +172,7 @@ class InteractiveClient(object):
 
     def fetchSubscriptions(self):
         self.__subscriptionClient = SubscriptionClient(
-            credentials=self.getCredentialsForResource(self.__tenantId, self.__managementResource))
+            credentials=CredentialsProviderFactory.getCredentialsForResource(self.__config, self.__managementResource))
         for subscription in self.__subscriptionClient.subscriptions.list():
             self.__subscriptionList.append(subscription)
 
@@ -186,7 +187,7 @@ class InteractiveClient(object):
 
     def __selectSubscriptions(self):
         if len(self.__subscriptionList) == 0:
-            print "\n No Subscriptions found in tenant: " + self.__tenantId
+            print "\n No Subscriptions found in tenant: " + self.__config.getTenantId()
             return
         line = "\n Please provide comma separated Subscription No. (eg. 1,3,4) or 'ALL' for all subscriptions"
         subString = self.__getInput(line)
@@ -205,7 +206,7 @@ class InteractiveClient(object):
                     indexNum = int(index)
                     if indexNum >= 1 and indexNum <= len(self.__subscriptionList):
                         self.__selectedSubscriptionList.append(self.__subscriptionList[indexNum - 1])
-                        self.__subScriptionIdList.append(self.__subscriptionList[indexNum - 1].subscription_id)
+                        self.__config.getSubscriptionList().append(self.__subscriptionList[indexNum - 1].subscription_id)
             except Exception as e:
                 self.__selectSubscriptions()
 
@@ -230,8 +231,8 @@ class InteractiveClient(object):
             if tenantNo >= 1 and tenantNo <= len(self.__tenantIdList):
                 tenantNo = tenantNo - 1
                 self.__tenantObject = self.__tenantIdList[tenantNo]
-                self.__tenantId = self.__tenantObject["tenant"]
-                print "\n Selected tenant: " + self.__tenantId
+                self.__config.setTenantId(self.__tenantObject["tenant"])
+                print "\n Selected tenant: " + self.__config.getTenantId()
                 return
             else:
                 self.__selectTenant()
@@ -239,28 +240,27 @@ class InteractiveClient(object):
             self.__selectTenant()
 
     def fetchTenants(self):
-        self.__subscriptionClient = SubscriptionClient(self.getCredentialsForResource(None, self.__managementResource))
+        config = Config(self.__credentials, None, [], True, None, "", self.__cloudType.name, [], True);
+        self.__subscriptionClient = SubscriptionClient(CredentialsProviderFactory.getCredentialsForResource(config, self.__managementResource))
         for tenant in self.__subscriptionClient.tenants.list():
-            config = Config([], True, str(tenant.tenant_id), "", self.__cloudType.name, [], True);
+            config = Config(self.__credentials, None, [], True, str(tenant.tenant_id), "", self.__cloudType.name, [], True);
 
-            # credentialsProvider = UserPasswordCredentialsProvider(self.__userName, self.__password, config);
             tenantId = config.getTenantId();
-            credentials = self.getCredentialsForResource(tenantId, self.__graphResource)
+            credentials = CredentialsProviderFactory.getCredentialsForResource(config, self.__graphResource)
 
             tenantUtil = TenantUtil(credentials, tenantId)
-            self.__tenantIdList.append({"tenant": tenantId, "details": tenantUtil.getAdProperties()})
+
+            tenantProperties = tenantUtil.getAdProperties();
+            if tenantProperties:
+                self.__tenantIdList.append({"tenant": tenantId, "details": tenantProperties})
+            else:
+                logging.warn("Could not get Tenant description for tenant Id: " + tenantId)
         if len(self.__tenantIdList) == 0:
             print "No Tenants Found"
             exit(1)
 
     def runApp(self):
-        config = Config(self.__subScriptionIdList, self.__allSubscriptions, str(self.__tenantId), IDENTIFIER_URL,
-                        self.__cloudType.name, PROVIDER_REGISTRATION_LIST, self.__updateApp)
-        appManager = AppManager(self.__userName, self.__password, self.__clientSecret, config, self.__registerProviders)
+        config = self.__config
+        appManager = AppManager(config, self.__registerProviders)
         appManager.run()
 
-    def getCredentialsForResource(self, tenantId, resource):
-        if tenantId!=None:
-            return UserPassCredentials(self.__userName, self.__password, tenant=tenantId, resource=resource)
-        else:
-            return UserPassCredentials(self.__userName, self.__password, resource=resource)

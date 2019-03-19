@@ -1,12 +1,11 @@
 {
   "credentials": {
-    "userName": "",
-    "password": ""
+    "type": "CLI",
+    "userName": ""
   },
-  "clientSecret": "",
-  "updatePermissionsForExistingApp": true,
-  "tenantId": "",
+  "updatePermissionsForExistingApp": false,
+  "tenantId": "c915c992-9c8b-467b-bc04-2e86171a0121",
   "subscriptionList": [],
   "allSubscriptions": true,
-  "registerProviders": false
+  "registerProviders": true
 }
