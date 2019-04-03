@@ -57,6 +57,7 @@ It does not create a new service account key for an existing service account.
     - monitoring.googleapis.com
     - logging.googleapis.com
     - storage-component.googleapis.com
+    - serviceusage.googleapis.com
 - MODIFY_IAM_POLICY
     If the user grants consent to the application, the CLI will modify the project or Org IAM policy, depending on the ID_TYPE.
 ### Interactive
