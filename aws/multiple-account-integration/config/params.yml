@@ -1,0 +1,97 @@
+delete_on_rollback : "Yes/No"
+
+url:
+  type-cloudTrail-config: "https://%account/api/v1/external/downloads/templates/lacework-aws-ct-cfg-auto.json"
+  type-cloudTrail: "https://%account/api/v1/external/downloads/templates/lacework-aws-cloudtrail-auto.json"
+  type-config: "https://%account/api/v1/external/downloads/templates/lacework-aws-cfg-auto.json"
+
+
+default-params:
+  region : ""
+  StackName : ""
+  ResourceNamePrefix : ""
+  CreateNewCloudTrail : "Yes/No"
+  NewTrailLogFilePrefix : ""
+  ExistingTrailBucketName : ""
+  ExistingTrailTopicArn : ""
+  default-tags:
+    key1 : "value1"
+
+
+
+stacks: [
+      {
+        Name : "Account Name Identifier1",
+        Profile : "",
+        region : "",
+        aws_access_key_id : "",
+        aws_secret_access_key : "",
+        RoleArn : "",
+        type-cloudTrail : {
+          StackName : "aws-ct stack name",
+          ResourceNamePrefix : "",
+          CreateNewCloudTrail : "Yes/No",
+          NewTrailLogFilePrefix : "",
+          ExistingTrailBucketName : "",
+          ExistingTrailTopicArn : "",
+          tags : {
+            key2 : "value2"
+          }
+        },
+        type-cloudTrail-config : {
+          StackName : "aws-ct-cfg stack name",
+          ResourceNamePrefix : "",
+          CreateNewCloudTrail : "Yes/No",
+          NewTrailLogFilePrefix : "Yes/No",
+          ExistingTrailBucketName : "",
+          ExistingTrailTopicArn : "",
+          tags : {
+            key2 : "value2"
+          }
+        },
+        type-config : {
+          StackName : "aws-cfg stack name",
+          ResourceNamePrefix : "",
+          tags : {
+            key2 : "value2"
+          }
+        }
+      },
+      {
+        Name : "Account Name Identifier2",
+        Profile : "",
+        region : "",
+        aws_access_key_id : "",
+        aws_secret_access_key : "",
+        RoleArn : "",
+        type-cloudTrail : {
+          StackName : "aws-ct stack name",
+          ResourceNamePrefix : "",
+          CreateNewCloudTrail : "Yes/No",
+          NewTrailLogFilePrefix : "",
+          ExistingTrailBucketName : "",
+          ExistingTrailTopicArn : "",
+          tags : {
+            key2 : "value2"
+          }
+        },
+        type-cloudTrail-config : {
+          StackName : "aws-ct-cfg stack name",
+          ResourceNamePrefix : "",
+          CreateNewCloudTrail : "Yes/No",
+          NewTrailLogFilePrefix : "Yes/No",
+          ExistingTrailBucketName : "",
+          ExistingTrailTopicArn : "",
+          tags : {
+            key2 : "value2"
+          }
+        },
+        type-config : {
+          StackName : "aws-cfg stack name",
+          ResourceNamePrefix : "",
+          tags : {
+            key2 : "value2"
+          }
+        }
+      }
+  ]
