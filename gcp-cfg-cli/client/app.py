@@ -32,8 +32,11 @@ if __name__ == "__main__":
         exit(1)
 
     credentials_data = ConfigParser.getCredentialsFileData(service_account_credentials_file_location)
+
     config = Config(credentials_data, None, None, None, None, None)
 
     client  = UserClientFactory.getClient(mode, config)
     client.initConfig()
+    client.validate()
+
     client.run()

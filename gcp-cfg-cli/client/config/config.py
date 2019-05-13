@@ -2,11 +2,13 @@
 from client_helper import ClientHelper
 
 API_LIST = [
+    "serviceusage.googleapis.com",
     "iam.googleapis.com",
     "cloudkms.googleapis.com",
     "cloudresourcemanager.googleapis.com",
     "compute.googleapis.com",
     "dns.googleapis.com",
+    "sqladmin.googleapis.com",
     "monitoring.googleapis.com",
     "logging.googleapis.com",
     "storage-component.googleapis.com"
@@ -30,6 +32,12 @@ class Config(object):
     # Input Service Account Email
     def getServiceAccountEmail(self):
         return self.__credentials_json['client_email']
+
+    # Input Service Account Email
+    def getUserServiceAccountProjectId(self):
+        if 'project_id' not in self.__credentials_json:
+            raise Exception("Project Id not in service account credentials File")
+        return self.__credentials_json['project_id']
 
     def getHttpClient(self):
         return self.__httpClient

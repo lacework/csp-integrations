@@ -1,5 +1,5 @@
 import logging
-
+import time
 SERVICE_ACCOUNTS = "https://iam.googleapis.com/v1/projects/%projectId/serviceAccounts"
 SERVICE_ACCOUNTS_KEYS = "https://iam.googleapis.com/v1/projects/%projectId/serviceAccounts/%serviceAccountId/keys"
 org_roles = ["roles/owner","roles/resourcemanager.organizationAdmin"]
@@ -55,6 +55,17 @@ class UtilServiceAccount(UtilBase):
                 return service_account
         return False
 
+
+    def getServiceAccountInProjectRecursive(self, projectId, i=1):
+        service_account = self.getServiceAccountInProjectIfExists(projectId)
+        if not service_account:
+            if i>10:
+                raise Exception("Could not find service account after creation")
+            time.sleep(3)
+            return self.getServiceAccountInProjectRecursive(projectId, i+1)
+        return service_account
+
+
     def getServiceAccountList(self):
         projectList = self.getProjectList()
         service_account_list = []
@@ -88,6 +99,7 @@ class UtilServiceAccount(UtilBase):
         response = self.config.getHttpClient().make_request(HTTP_POST_METHOD, SERVICE_ACCOUNTS, projectId, body)
         if response['isError']:
             raise Exception("Error creating a Service Account \n" + str(response['defaultErrorObject']))
+
         return self.createServiceAccountKey()
         # return response['data']
 
@@ -103,7 +115,7 @@ class UtilServiceAccount(UtilBase):
 
     def createServiceAccountKey(self):
         projectId = self.config.getServiceAccountProjectId()
-        service_account = self.getServiceAccountInProjectIfExists(projectId)
+        service_account = self.getServiceAccountInProjectRecursive(projectId)
         serviceAccountId = service_account['email']
         body=  {
             "keyAlgorithm": "KEY_ALG_RSA_2048"

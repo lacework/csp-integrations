@@ -27,10 +27,11 @@ def printBold(text):
 class ClientBase(object):
     def __init__(self, config):
         self.config = config
-
+        self.util = None
 
     def run(self):
-        util = Util(self.config)
+        self.util =  Util(self.config)
+        util = self.util
         appManager = AppManager(self.config, util)
 
         api_success_list, api_error_list, service_account, key = appManager.run()
@@ -39,9 +40,21 @@ class ClientBase(object):
             self.printProjectList(api_success_list, "Successfully Enabled APIs in following projects")
 
         if api_error_list and len(api_error_list) != 0:
-            self.printProjectList(api_error_list, "Error Enabling APIs in following projects")
+            self.printProjectErrorList(api_error_list, "Error Enabling APIs in following projects")
 
         self.printInterationData(service_account, key)
+
+    def validate(self):
+        self.util = Util(self.config)
+        config = self.config
+        if config.getIdType() == "ORGANIZATION" and not config.getId().isdigit():
+            raise Exception("Invalid org id")
+
+        # Validate service account project id
+        for project in self.util.getProjectList():
+            if project['projectId'] == config.getServiceAccountProjectId():
+                return True
+        raise Exception("Project Id is not valid: " + config.getServiceAccountProjectId())
 
 
     def printProjectList(self, projectList, heading):
@@ -52,6 +65,17 @@ class ClientBase(object):
             prettyTable.add_row([str(i), project['projectId'], project['name']])
             i += 1
         print prettyTable
+
+    def printProjectErrorList(self, projectList, heading):
+        printBold(heading)
+        prettyTable = PrettyTable(["No.", "Project Id", "Project Name", "Error"])
+        i = 1
+        for project in projectList:
+            prettyTable.add_row([str(i), project['projectId'], project['name'], project['errorCause']])
+            i += 1
+        print prettyTable
+
+
 
     def printInterationData(self, serviceAccount, key):
         config = self.config

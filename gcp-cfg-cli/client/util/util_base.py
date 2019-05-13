@@ -24,15 +24,45 @@ class UtilBase(object):
                         'projects': [singleprojectData.get("data")]
                     }
                 }
+                if singleprojectData["data"].get('lifecycleState') != "ACTIVE":
+                    raise Exception("Project Lifecycle state is: " + str(projectData['lifecycleState']))
         else:
-            googleClient = self.config.getHttpClient()
-            projectData = googleClient.make_request( HTTP_GET_METHOD, PROJECT_ID_LIST_URL, None, None)
+            projectData = {
+                'isError': False,
+                'defaultErrorObject': {},
+                "data": {
+                    'projects': self.__get_Project_List(None, True)
+                }
+            }
+        if projectData['isError']:
+            raise Exception("Error fetching projects")
+        projectList = projectData['data']['projects']
+        projectList = [project for project in projectList if project['lifecycleState'] == "ACTIVE"]
+        self.__projectList = projectList
+        return self.__projectList
+
+    def __get_Project_List(self, pageToken, isBegin):
+        if pageToken is None and not isBegin:
+            return []
+        googleClient = self.config.getHttpClient()
+        url = PROJECT_ID_LIST_URL
+        if pageToken is not None:
+            url = url + "?pageToken=" + pageToken + "&pageSize=100"
+        else:
+            url = url  + "?pageSize=100"
+
+        projectData = googleClient.make_request(HTTP_GET_METHOD, url, None, None)
         if projectData['isError']:
             raise Exception("Error fetching Project Information \n" + str(projectData['defaultErrorObject']))
-        if 'projects' not in  projectData['data'] or len(projectData['data']['projects'])==0:
+        if 'projects' not in projectData['data'] or len(projectData['data']['projects']) == 0:
             raise Exception("No Projects Found")
-        self.__projectList = projectData['data']['projects']
-        return self.__projectList
+        projectList = projectData['data']['projects']
+        if 'nextPageToken' in projectData['data']:
+            nextPageToken = str(projectData['data']['nextPageToken'])
+            projectList = projectList + (self.__get_Project_List(nextPageToken, False))
+        return projectList
+
+
 
     def validateProjectId(self, projectId):
 

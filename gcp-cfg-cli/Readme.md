@@ -3,6 +3,7 @@ The CLI creates an integration for GCP compliance at the project level or organi
 # Organization
 The script creates a service account in the specified project and grants permissions to the service account at the organization level.
 ### Requirements of the User Service Account
+These permissions take a couple of minutes to propagate. The user needs to wait for a few minutes before executing the script.
 Input Service Account with the following roles at the Organization Level:
 - roles/owner
 - roles/resourcemanager.organizationAdmin
@@ -14,6 +15,7 @@ Integration Service Account has the following roles at the Organization Level:
 ### Requirements of the Service Account Project
 The project must have the following API enabled.
 - iam.googleapis.com
+- cloudresourcemanager.googleapis.com
 ### Script Output
 The cli creates a Service Account with email  lacework-cfg-sa@<projectid>.iam.gserviceaccount.com in the specified project.
 It does not create a new service account key for an existing service account.
@@ -31,6 +33,7 @@ Integration Service Account has the following roles at the Project Level:
 ### Requirements of the Service Account Project
 The project must have the following API enabled.
 - iam.googleapis.com
+- cloudresourcemanager.googleapis.com
 ### Script Output
 The cli creates a Service Account with email  lacework-cfg-sa@<projectid>.iam.gserviceaccount.com in the specified project.
 It does not create a new service account key for an existing service account.
@@ -55,9 +58,13 @@ It does not create a new service account key for an existing service account.
     - compute.googleapis.com
     - dns.googleapis.com
     - monitoring.googleapis.com
+    - sqladmin.googleapis.com
     - logging.googleapis.com
     - storage-component.googleapis.com
     - serviceusage.googleapis.com
+    
+    Note:- A gcp project has a sericeusage quota of 120 apis per minute, hence the script can enable APIs in
+    10 projects per minute. If your org has too many projects, this might take a while. You can say no to this initially, create the integration and enable the APIs by re-running the script later. Rerunning the script for the same project will only enable the APIs. 
 - MODIFY_IAM_POLICY
     If the user grants consent to the application, the CLI will modify the project or Org IAM policy, depending on the ID_TYPE.
 ### Interactive
