@@ -2,4 +2,4 @@
 
 set -e
 
-python client/app.py "$@"
+python2.7 client/app.py "$@"

@@ -18,6 +18,7 @@ class CommonUtil(object):
         self.__subscriptionClient = SubscriptionClient(credentialsProvider.getManagementCredentials())
         self.__identifierUrl = credentialsProvider.getConfig().getIdentifierUrl()
         self.__config = credentialsProvider.getConfig()
+        self.__subScriptionList = None
 
     def getGraphRbacClient(self):
         return self.__graphRbacClient
@@ -38,6 +39,9 @@ class CommonUtil(object):
         return ResourceManagementClient(self.__credentialsProvider.getManagementCredentials(), subscriptionId)
 
     def getSubscriptions(self):
+        if self.__subScriptionList:
+            return self.__subScriptionList
+
         knownSubscriptionList = self.__getKnownSubscriptionsAsList()
         subscriptionList = []
         if self.__config.getAllSubscriptions():
@@ -56,6 +60,7 @@ class CommonUtil(object):
                 "Subscription Id: " + subscription.subscription_id + " Subscription Name: " + subscription.display_name)
             if str(subscription.state) != 'SubscriptionState.enabled':
                 raise Exception("Subscription Id: " + subscription.subscription_id + " Subscription Name: " + subscription.display_name + " is not enabled")
+        self.__subScriptionList = subscriptionList
         return subscriptionList
 
     def __getSubscriptionFromList(self, subscriptionNameOrId, subscriptionList):
@@ -69,7 +74,8 @@ class CommonUtil(object):
         subscriptionIter = self.__subscriptionClient.subscriptions.list()
 
         for subscription in subscriptionIter:
-            subscriptionList.append(subscription)
+            if str(subscription.state) == 'SubscriptionState.enabled':
+                subscriptionList.append(subscription)
         return subscriptionList
 
     def __checkAppExists(self, identifierUrl):

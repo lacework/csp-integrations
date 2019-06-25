@@ -19,7 +19,9 @@ class ValidatorUtil(CommonUtil):
                                                         authorizationManagementClient)
                 if roleAssignment == None:
                     raise Exception(
-                        "User does not have owner role on subscription Id: " + subscription.subscription_id + " Name: " + subscription.subscription_id)
+                        "User does not have owner role on subscription Id: " + subscription.subscription_id + " Name: " + subscription.display_name)
             except Exception as e:
-                log.error("User does not have owner role on subscription Id: " + subscription.subscription_id + " Name: " + subscription.subscription_id)
+                log.error("User does not have owner role on subscription Id: " + subscription.subscription_id + " Name: " + subscription.display_name)
                 raise e
+
+

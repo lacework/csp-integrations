@@ -174,7 +174,8 @@ class InteractiveClient(object):
         self.__subscriptionClient = SubscriptionClient(
             credentials=CredentialsProviderFactory.getCredentialsForResource(self.__config, self.__managementResource))
         for subscription in self.__subscriptionClient.subscriptions.list():
-            self.__subscriptionList.append(subscription)
+            if str(subscription.state) == 'SubscriptionState.enabled':
+                self.__subscriptionList.append(subscription)
 
     def printSubscriptions(self, subscriptionList):
         prettyTable = PrettyTable(["No.", "Subscription Id", "Display Name"])
@@ -194,7 +195,9 @@ class InteractiveClient(object):
         if subString == "ALL":
             self.__allSubscriptions = True
             self.__selectedSubscriptionList = self.__subscriptionList
+            self.__config.setAllSubscriptions(True)
         else:
+            self.__config.setAllSubscriptions(False)
             try:
                 subsIndexList = [x.strip() for x in subString.split(',')]
                 for index in subsIndexList:

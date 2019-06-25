@@ -20,6 +20,7 @@ KEY_CLIENT_SECRET = "secret"
 class ResourceCredentialsProvider(object):
     def __init__(self, config):
         self.__config = config
+        self.__objectId = None
 
     @abstractmethod
     def getGraphResourceCredentials(self):
@@ -40,6 +41,12 @@ class ResourceCredentialsProvider(object):
     @abstractmethod
     def getObjectId(self):
         pass
+
+    def getObjectIdData(self, graphClient):
+        if self.__objectId == None:
+            currentUser = graphClient.objects.get_current_user()
+            self.__objectId = currentUser.object_id
+        return self.__objectId
 
     def getConfig(self):
         return self.__config
@@ -57,7 +64,7 @@ class AzureEnvironmentSessionCredentialsProvider(ResourceCredentialsProvider):
         self.__grantCredentials = AzureEnvironmentSessionCredentials( resource="74658136-14ec-4630-ad9b-26e160ff0fc6", tenant=config.getTenantId())
         self.__managementCredentials = AzureEnvironmentSessionCredentials(resource=managementResource, tenant=config.getTenantId())
         self.__keyVaultCredentials = AzureEnvironmentSessionCredentials(resource="https://vault.azure.net", tenant=config.getTenantId())
-        self.__objectId = None
+        # self.__objectId = None
         self.getObjectId()
 
     def getGraphResourceCredentials(self):
@@ -73,12 +80,13 @@ class AzureEnvironmentSessionCredentialsProvider(ResourceCredentialsProvider):
         return self.__keyVaultCredentials
 
     def getObjectId(self):
-        if self.__objectId == None:
-            graphRbacClient = GraphRbacManagementClient(self.__graphCredentials, self.getConfig().getTenantId())
-            for user in graphRbacClient.users.list():
-                if user.mail == self.__userName:
-                    self.__object_id = user.object_id
-        return self.__object_id
+        # if self.__objectId == None:
+        graphRbacClient = GraphRbacManagementClient(self.__graphCredentials, self.getConfig().getTenantId())
+        return self.getObjectIdData(graphRbacClient)
+    #         for user in graphRbacClient.users.list():
+    #             if user.mail == self.__userName or user.given_name == self.__userName or ('additionalProperties' in user and self.__userName in user.get('additionalProperties').get('otherMails')):
+    #                 self.__objectId = user.object_id
+    #     return self.__objectId
 
 
 
@@ -102,9 +110,9 @@ class UserPasswordCredentialsProvider(ResourceCredentialsProvider):
                                                            resource=managementResource, tenant=config.getTenantId())
         self.__keyVaultCredentials = UserPassCredentials(userName, password,resource = "https://vault.azure.net"
                                                          ,tenant=config.getTenantId())
-        graphClient = GraphRbacManagementClient(self.__graphCredentials, config.getTenantId())
-        currentUser = graphClient.objects.get_current_user()
-        self.__objectId = currentUser.object_id
+        # graphClient = GraphRbacManagementClient(self.__graphCredentials, config.getTenantId())
+        # currentUser = graphClient.objects.get_current_user()
+        # self.__objectId = currentUser.object_id
 
     def getGraphResourceCredentials(self):
         return self.__graphCredentials
@@ -119,11 +127,8 @@ class UserPasswordCredentialsProvider(ResourceCredentialsProvider):
         return self.__keyVaultCredentials
 
     def getObjectId(self):
-        if self.__objectId == None:
-            graphClient = GraphRbacManagementClient(self.__graphCredentials, self.getConfig().getTenantId())
-            currentUser = graphClient.objects.get_current_user()
-            self.__objectId = currentUser.object_id
-        return self.__objectId
+        graphRbacClient = GraphRbacManagementClient(self.__graphCredentials, self.getConfig().getTenantId())
+        return self.getObjectIdData(graphRbacClient)
 
 class AppCredentialsProvider(ResourceCredentialsProvider):
     def __init__(self, config):
@@ -173,12 +178,8 @@ class AppCredentialsProvider(ResourceCredentialsProvider):
         return self.__keyVaultCredentials
 
     def getObjectId(self):
-        if self.__objectId ==None:
-            graphClient = GraphRbacManagementClient(self.__graphCredentials, config.getTenantId())
-            currentUser = graphClient.objects.get_current_user()
-            self.__objectId = currentUser.object_id
-        return self.__objectId
-
+        graphRbacClient = GraphRbacManagementClient(self.__graphCredentials, self.getConfig().getTenantId())
+        return self.getObjectIdData(graphRbacClient)
 
 class CredentialsProviderFactory():
 

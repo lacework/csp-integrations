@@ -40,14 +40,17 @@ class AppManager(object):
             self.__registerProvider()
         self.__createOrUpdateApp()
 
-        if not appExists:
-            if self.__config.getCredentials().get('type') != CREDENTIALS_TYPE_PORTAL:
-                self.__testCredentials()
+        try:
+            if not appExists:
+                if self.__config.getCredentials().get('type') != CREDENTIALS_TYPE_PORTAL:
+                    self.__testCredentials()
+                else:
+                    logging.info("Skipping credentials test as it requires permissions to be granted to the App via the UI")
             else:
-                logging.info("Skipping credentials test as it requires permissions to be granted to the App via the UI")
-        else:
-            logging.info("App Updated Successfully. New Client Secret Not generated")
-            self.__clientSecret = None
+                logging.info("App Updated Successfully. New Client Secret Not generated")
+                self.__clientSecret = None
+        except:
+            logging.exception("Error testing Credentials")
         self.__printCredentials()
         if not appExists and self.__config.getCredentials().get('type') == CREDENTIALS_TYPE_PORTAL:
             logging.info("Please remember to grant permissions for API access to the App " + APP_NAME + " before using credentials.")
