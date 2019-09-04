@@ -20,4 +20,6 @@ azure-cfg-cli/env/
 .project
 .settings/
 .classpath
+*.log
+*/credentials.txt
 #End of eclipse and jooq config files

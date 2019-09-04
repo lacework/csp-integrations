@@ -8,7 +8,7 @@ from util.validator_util import ValidatorUtil
 from util.provider_util import ProviderUtil
 from util.config import Config
 import logging, json
-import time
+import time, os
 APP_NAME = "LaceworkSAAudit"
 from util.credentials.credentials_provider import   CREDENTIALS_TYPE_APP, CREDENTIALS_TYPE_PORTAL
 from util.credentials.credentials_provider import  KEY_CLIENT_SECRET, KEY_APP_ID
@@ -52,6 +52,7 @@ class AppManager(object):
         except:
             logging.exception("Error testing Credentials")
         self.__printCredentials()
+
         if not appExists and self.__config.getCredentials().get('type') == CREDENTIALS_TYPE_PORTAL:
             logging.info("Please remember to grant permissions for API access to the App " + APP_NAME + " before using credentials.")
 
@@ -97,4 +98,14 @@ class AppManager(object):
     def __printCredentials(self):
         appId = self.__appUtil.getAppId()
         map = {"CLIENT_ID": appId, "CLIENT_SECRET": self.__clientSecret, "TENANT_ID": self.__config.getTenantId()}
-        logging.info("\n" + json.dumps(map, sort_keys=True, indent=4, separators=(',', ': ')))
+        out= json.dumps(map, sort_keys=True, indent=4, separators=(',', ': '))
+        logging.info("\n" + out)
+        if self.__clientSecret:
+            try:
+                path = os.getcwd() +"/credentials.txt"
+                f = open(path, "w")
+                f.writelines(out)
+                f.close()
+                logging.info("Copy Of Credentials written to file: " + path)
+            except:
+                logging.exception("Could not write data to file ")

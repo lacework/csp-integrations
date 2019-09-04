@@ -107,10 +107,22 @@ class CommonUtil(object):
             roleId = role.id
         return roleId
 
-    def getRoleAssignment(self, subscriptionId, principalId, roleDefinitionId, authorizationClient):
+
+    def getRoleAssignment(self, subscriptionId, principalId,  roleDefinitionId, authorizationClient):
         isinstance(authorizationClient, AuthorizationManagementClient)
 
         for roleAssignment in authorizationClient.role_assignments.list(scope="/subscriptions/" + subscriptionId):
             if roleAssignment.principal_id == principalId and roleAssignment.role_definition_id == roleDefinitionId:
                 return roleAssignment
+        return None
+
+    def getRoleAssignmentForUserAndGroup(self, subscriptionId, principalId, userGroupObjectId, roleDefinitionId, authorizationClient):
+        isinstance(authorizationClient, AuthorizationManagementClient)
+        scope = "/subscriptions/" + subscriptionId
+        for roleAssignment in authorizationClient.role_assignments.list(scope="/subscriptions/" + subscriptionId):
+            if (roleAssignment.principal_id == principalId or roleAssignment.principal_id in userGroupObjectId) and roleAssignment.role_definition_id == roleDefinitionId:
+                if roleAssignment.scope == scope:
+                    return roleAssignment
+                else:
+                    log.info("Role assignment is present with invalid scope: "  + roleAssignment.scope)
         return None

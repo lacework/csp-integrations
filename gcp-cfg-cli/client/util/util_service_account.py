@@ -88,6 +88,7 @@ class UtilServiceAccount(UtilBase):
         projectId = self.config.getServiceAccountProjectId()
         service_account = self.getServiceAccountInProjectIfExists(projectId)
         if service_account:
+            logging.info("Service account exists Skipping Service account Key Creation")
             return service_account, None
         body = {
             "accountId": SERVICE_ACCOUNT_ID,
@@ -99,7 +100,8 @@ class UtilServiceAccount(UtilBase):
         response = self.config.getHttpClient().make_request(HTTP_POST_METHOD, SERVICE_ACCOUNTS, projectId, body)
         if response['isError']:
             raise Exception("Error creating a Service Account \n" + str(response['defaultErrorObject']))
-
+        logging.info("Created Service account.")
+        logging.info("Creating Service account Key.")
         return self.createServiceAccountKey()
         # return response['data']
 
@@ -125,4 +127,5 @@ class UtilServiceAccount(UtilBase):
                                                                         projectId, body)
         if service_account_key['isError']:
             raise Exception("Error Creating Service Account Key " + str(service_account_key['defaultErrorObject']))
+        logging.info("Successfully created service account Key")
         return service_account, service_account_key['data']

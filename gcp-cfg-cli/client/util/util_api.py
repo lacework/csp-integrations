@@ -6,7 +6,7 @@ import time
 from util_base import UtilBase
 import logging
 MAX_SERVICE_USAGE_MUTATE_QUOTA_PER_MINUTE = 120
-
+SLEEP_SECS = 60
 class UtilAPI(UtilBase):
 
     def __init__(self, config):
@@ -45,11 +45,17 @@ class UtilAPI(UtilBase):
                 success_list.append(project)
                 logging.info("Enabled Apis in project: " + project['projectId'])
             except Exception as e:
-                project['errorCause'] = e.message.rstrip()
+                msg = e.message.rstrip()
+                if 'Billing must be enabled for activation of service' in msg:
+                    project['errorCause'] = "Billing not enabled in project"
+                else:
+                    project['errorCause'] = msg
                 error_list.append(project)
                 logging.info("Could not Enable Apis in project: " + project['projectId'])
             if i%apiEnableRequestsPerMinute == 0:
-                time.sleep(60)
+                logging.info("Sleeping for " + str(SLEEP_SECS) + " secs to avoid API enablement quota errors...")
+                time.sleep(SLEEP_SECS)
+
 
         return success_list, error_list
 

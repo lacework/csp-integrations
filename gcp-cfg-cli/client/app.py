@@ -19,6 +19,7 @@ def raiseException(ex):
     raise ex
 
 if __name__ == "__main__":
+
     ap = argparse.ArgumentParser()
     ap.add_argument("--mode", required=False, default="interactive",
                     help="mode is either interactive | non-interactive")
@@ -27,13 +28,9 @@ if __name__ == "__main__":
     args = vars(args)
     mode  = args["mode"]
 
-    if not os.path.isfile(service_account_credentials_file_location):
-        logging.info("Service Account Credentials File Not Found At Location: " + service_account_credentials_file_location)
-        exit(1)
+    credentials_data, project_id, isCloudShell = ConfigParser.getCredentialsFileData(service_account_credentials_file_location)
 
-    credentials_data = ConfigParser.getCredentialsFileData(service_account_credentials_file_location)
-
-    config = Config(credentials_data, None, None, None, None, None)
+    config = Config(credentials_data, project_id, isCloudShell, None, None, None, None, None)
 
     client  = UserClientFactory.getClient(mode, config)
     client.initConfig()

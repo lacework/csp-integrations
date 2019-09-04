@@ -15,9 +15,11 @@ API_LIST = [
 ]
 class Config(object):
 
-    def __init__(self, credentials_json, id_type, id, enable_api, service_account_project_id, set_iam_policy):
-        self.__credentials_json = credentials_json
-        self.__httpClient =  ClientHelper(credentials_json)
+    def __init__(self, credentials, project_id,isCloudShell, id_type, id, enable_api, service_account_project_id, set_iam_policy):
+        self.__credentials = credentials
+        self.__project_id = project_id
+        self.__isCloudShell = isCloudShell
+        self.__httpClient =  ClientHelper(credentials)
         self.__id_type = id_type
         self.__id = id
         self.__enable_api = enable_api
@@ -31,13 +33,13 @@ class Config(object):
 
     # Input Service Account Email
     def getServiceAccountEmail(self):
-        return self.__credentials_json['client_email']
+        return self.__credentials.service_account_email
 
     # Input Service Account Email
     def getUserServiceAccountProjectId(self):
-        if 'project_id' not in self.__credentials_json:
+        if self.__project_id == None:
             raise Exception("Project Id not in service account credentials File")
-        return self.__credentials_json['project_id']
+        return self.__project_id
 
     def getHttpClient(self):
         return self.__httpClient
@@ -74,6 +76,9 @@ class Config(object):
 
     def getApiList(self):
         return self.__api_list
+
+    def isCloudShell(self):
+        return self.__isCloudShell
 
     def getServiceAccountRoleList(self):
         if self.__id_type == None:

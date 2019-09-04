@@ -1,14 +1,11 @@
 from google.auth.transport.requests import AuthorizedSession
-from google.oauth2 import service_account
 import json
 
 SCOPES = ['https://www.googleapis.com/auth/cloud-platform']
 
-
 class ClientHelper(object):
     def __init__(self, credentials):
-        service_account_credentials = service_account.Credentials.from_service_account_info(credentials, scopes=SCOPES)
-        self.client = AuthorizedSession(service_account_credentials)
+        self.client = AuthorizedSession(credentials)
 
     def make_request(self, method, url, projectId, body):
 

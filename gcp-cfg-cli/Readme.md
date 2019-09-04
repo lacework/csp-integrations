@@ -2,7 +2,9 @@
 The CLI creates an integration for GCP compliance at the project level or organization level.
 # Organization
 The script creates a service account in the specified project and grants permissions to the service account at the organization level.
-### Requirements of the User Service Account
+### Requirements of the User Service Account/User
+#####Note: 
+When running on cloud shell, the user credentials will be used. It is not required to create a service account to execute the script when using a user service account. Equivalent permissions need to be provided to the user
 These permissions take a couple of minutes to propagate. The user needs to wait for a few minutes before executing the script.
 Input Service Account with the following roles at the Organization Level:
 - roles/owner
@@ -18,8 +20,7 @@ The project must have the following API enabled.
 - cloudresourcemanager.googleapis.com
 ### Script Output
 The cli creates a Service Account with email  lacework-cfg-sa@<projectid>.iam.gserviceaccount.com in the specified project.
-It does not create a new service account key for an existing service account.
-
+It does not create a new service account key for an existing service account. It also writes the credentials to a file.
 # Project
 The script creates a service account in the specified project and grants permissions to the service account at the project level.
 ### Requirements of the User Service Account
@@ -67,17 +68,20 @@ It does not create a new service account key for an existing service account.
     10 projects per minute. If your org has too many projects, this might take a while. You can say no to this initially, create the integration and enable the APIs by re-running the script later. Rerunning the script for the same project will only enable the APIs. 
 - MODIFY_IAM_POLICY
     If the user grants consent to the application, the CLI will modify the project or Org IAM policy, depending on the ID_TYPE.
+
+### Authentication
+The service account credentials file needs to be in the path```client/sa_credentials.json```.
+When running on cloud shell, the user credentials will be used. The credentials file is not required in this case.
+
 ### Interactive
 
 #### Command
 ```./run.sh  --mode interactive```
-The service account credentials file needs to be in the path ```client/sa_credentials.json```
+
 
 ### NonInteractive
-
 ```./run.sh --mode non-interactive --id-type <ORGANIZATION|PROJECT> --id <ORG/PROJECT ID> --sa-project-id <SA_PROJECT_ID> --enable-api false --set-iam-policy true```
 
-The service account credentials file needs to be in the path ```client/sa_credentials.json```
 - Id-type : ORGANIZATION or PROJECT
 - Id: Project or Organization Id
 - sa-project-id: Service Account Project Id
