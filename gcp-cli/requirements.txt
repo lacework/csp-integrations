@@ -1,0 +1,6 @@
+google-auth==1.6.1
+google-auth-httplib2==0.0.3
+requests==2.20.1
+jsonschema==2.6.0
+prettytable==0.7.2
+pyyaml==5.1.2

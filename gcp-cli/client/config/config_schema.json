@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "setupPrefix": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 20,
+      "pattern": "^[a-z]{1}(([a-z0-9]+)?((-)?[a-z0-9]+)?)*$",
+      "message": {
+            "required": "Setup Prefix is a required property",
+            "pattern": "Setup Prefix should can contain letters numbers and hyphens. It should start with a letter and end with a letter or number"
+        }
+    },
+    "setupProjectId": {
+      "type": "string",
+      "minLength": 1,
+      "message": {
+        "required": "Setup project Id is a required property"
+      }
+    },
+    "auditLogSetupEnabled":{
+      "type": "boolean"
+    },
+    "customRole":{
+      "type": "boolean"
+    },
+    "complianceSetup": {
+      "type": "object",
+      "properties": {
+        "idType": {
+          "type": "string",
+          "enum": [
+            "ORGANIZATION",
+            "PROJECT"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "minLength": 2
+        },
+        "enableApi": {
+          "type": "boolean"
+        },
+        "setIamPolicy": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "idType",
+        "id",
+        "enableApi",
+        "setIamPolicy"
+      ],
+      "additionalProperties": false
+    },
+    "auditLogSetup": {
+      "type": "object",
+      "properties": {
+        "existingBucketName": {
+          "type": "string"
+        },
+        "exports": {
+          "type": "object",
+          "properties": {
+            "idType": {
+              "type": "string",
+              "enum": [
+                "ORGANIZATION",
+                "PROJECT"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "minLength": 2
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "idType",
+            "id"
+          ]
+        }
+      },
+      "required": [
+        "exports"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "complianceSetup",
+    "setupPrefix",
+    "setupProjectId"
+  ]
+}

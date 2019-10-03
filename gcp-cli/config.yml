@@ -1,0 +1,12 @@
+setupPrefix: ""
+auditLogSetupEnabled: true
+setupProjectId: ""
+complianceSetup:
+  idType: "PROJECT"
+  id: ""
+  enableApi: true
+  setIamPolicy: false
+auditLogSetup:
+  exports:
+    idType: "PROJECT"
+    id: ""
