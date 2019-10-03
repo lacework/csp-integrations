@@ -4,7 +4,7 @@ import logging
 import os
 import json
 SCOPES = ['https://www.googleapis.com/auth/cloud-platform']
-CREDENTIALS_FILE_PATH = "/Users/mobeentariq/Lacework/csp-integrations-internal/gcp-cli/client/credentials.json"
+CREDENTIALS_FILE_PATH = ""
 
 class AuthHelper(object):
 
