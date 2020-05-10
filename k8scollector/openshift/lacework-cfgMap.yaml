@@ -93,10 +93,6 @@ data:
       "collector": {
         "config_frequency_hour": "1"
       },
-      "credentials": {
-        "oc_password": "",
-        "oc_username": ""
-      },
       "lacework": {
         "access_key_id": "",
         "secret": "",
