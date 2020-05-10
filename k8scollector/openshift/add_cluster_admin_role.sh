@@ -1,0 +1,1 @@
+oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:lacework:k8scollector --rolebinding-name=cluster-admin
