@@ -1,0 +1,75 @@
+apiVersion: v1
+data:
+  internal.json: |-
+    {
+      "host_dir_mapping": "",
+      "regex": {
+        "cluster_server_address": "Server ",
+        "feature_prefix": "features ",
+        "k8s_server_version_prefix": "kubernetes ",
+        "oc_version_prefix": "oc ",
+        "openshift_version_3_11_prefix": "openshift v3.",
+        "openshift_version_prefix": "openshift "
+      },
+      "supported_node_types" : ["compute", "master", "infra"],
+      "config_mappings": {
+        "node_kubeconfig": {
+          "pod": "sync",
+          "node": ["compute", "master", "infra"]
+        },
+        "pod_apiserver": {
+          "pod": "sync",
+          "node": ["master"]
+        },
+        "pod_controller": {
+          "pod": "sync",
+          "node": ["master"]
+        },
+        "pod_etcd_config": {
+          "pod": "sync",
+          "node": ["master"]
+        },
+        "node_config": {
+          "pod": "sync",
+          "node": ["compute", "master", "infra"]
+        },
+        "encryption_config": {
+          "pod": "apiserver",
+          "node": ["master"]
+        },
+        "master_admin_kubeconfig": {
+          "pod": "apiserver",
+          "node": ["master"]
+        },
+        "master_kubeconfig": {
+          "pod": "apiserver",
+          "node": ["master"]
+        },
+        "master_config": {
+          "pod": "apiserver",
+          "node": ["master"]
+        },
+        "master_env": {
+          "pod": "apiserver",
+          "node": ["master"],
+          "file_format": "properties"
+        },
+        "openvswitch": {
+          "pod": "ovs",
+          "node": ["compute", "master", "infra"]
+        },
+        "etcd_permissions": {
+          "pod": "etcd",
+          "node": ["compute", "master", "infra"]
+        },
+        "etcd_config": {
+          "pod": "etcd",
+          "node": ["compute", "master", "infra"],
+          "file_format": "properties"
+        }
+      }
+    }
+kind: ConfigMap
+metadata:
+  name: lacework-internal-config
+  namespace: lacework

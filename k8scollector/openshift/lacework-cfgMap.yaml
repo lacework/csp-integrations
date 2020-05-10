@@ -1,0 +1,105 @@
+apiVersion: v1
+data:
+  filesCollection.json: |-
+    {
+      "file_collection": {
+        "k8s": {
+          "openshift": {
+            "v3.11": {
+              "attributes": {
+                "etcd_permissions": {
+                  "path": "/var/lib/etcd",
+                  "black_list": []
+                },
+                "master_admin_kubeconfig": {
+                  "path": "/etc/origin/master/admin.kubeconfig",
+                  "black_list": []
+                },
+                "master_kubeconfig": {
+                  "path": "/etc/origin/master/openshift-master.kubeconfig",
+                  "black_list": []
+                },
+                "node_kubeconfig": {
+                  "path": "/etc/origin/node/node.kubeconfig",
+                  "black_list": []
+                },
+                "openvswitch": {
+                  "path": "/etc/openvswitch",
+                  "black_list": []
+                },
+                "pod_apiserver": {
+                  "path": "/etc/origin/node/pods/apiserver.yaml",
+                  "black_list": []
+                },
+                "pod_controller": {
+                  "path": "/etc/origin/node/pods/controller.yaml",
+                  "black_list": []
+                },
+                "pod_etcd_config": {
+                  "path": "/etc/origin/node/pods/etcd.yaml",
+                  "black_list": []
+                }
+              },
+              "data": null,
+              "data_attributes": {
+                "encryption_config": {
+                  "path": "/etc/origin/master/encryption-config.yaml",
+                  "black_list": []
+                },
+                "etcd_config": {
+                  "path": "/etc/etcd/etcd.conf",
+                  "black_list": []
+                },
+                "master_config": {
+                  "path": "/etc/origin/master/master-config.yaml",
+                  "black_list": ["aggregatorConfig.proxyClientInfo.keyFile"]
+                },
+                "master_env": {
+                  "path": "/etc/origin/master/master.env",
+                  "black_list": []
+                },
+                "node_config": {
+                  "path": "/etc/origin/node/node-config.yaml",
+                  "black_list": []
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  userConfig.json: |-
+    {
+      "cluster_name": "cluster1",
+      "pod_configs":{
+        "sync": {
+          "namespace": "openshift-node",
+          "component": "sync"
+        },
+        "etcd": {
+          "namespace": "kube-system",
+          "component": "etcd"
+        },
+        "ovs": {
+          "namespace": "openshift-sdn",
+          "app_name": "ovs",
+          "component": "network"
+        },
+        "apiserver": {
+          "namespace": "kube-system",
+          "component": "api"
+        }
+      },
+      "collector": {
+        "config_frequency_hour": "1"
+      },
+      "lacework": {
+        "access_key_id": "",
+        "secret": "",
+        "lacework_account_id": ""
+      }
+    }
+kind: ConfigMap
+metadata:
+  name: lacework-config
+  namespace: lacework

@@ -1,0 +1,59 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: k8scollector
+  labels:
+    app: k8scollector
+  namespace: lacework
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: "lacework"
+    spec:
+      serviceAccountName: k8scollector
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+      containers:
+      - name: k8scollector
+        image: lacework/k8scollector:v1.0.1
+        ports:
+        - containerPort: 8081
+          protocol: TCP
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "512Mi"
+        volumeMounts:
+          - name: cfgmap
+            mountPath: /opt/lacework/userConfig
+          - name: cfgmap1
+            mountPath: /opt/lacework/config
+          - name: podinfo
+            mountPath: /etc/podinfo
+      volumes:
+        - name: cfgmap
+          configMap:
+            name: lacework-config
+            items:
+            - key: filesCollection.json
+              path: filesCollection.json
+            - key: userConfig.json
+              path: userConfig.json
+        - name: cfgmap1
+          configMap:
+            name: lacework-internal-config
+            items:
+            - key: internal.json
+              path: internal.json
+        - name: podinfo
+          downwardAPI:
+            items:
+              - path: "labels"
+                fieldRef:
+                  fieldPath: metadata.labels
+              - path: "annotations"
+                fieldRef:
+                  fieldPath: metadata.annotations
