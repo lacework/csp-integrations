@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "setupPrefix": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 3,
+      "pattern": "^[a-z](([a-z0-9]+)?((-)?[a-z0-9]+)?)*$",
+      "message": {
+            "required": "Setup Prefix is a required property",
+            "pattern": "Setup Prefix can contain letters numbers and hyphens. It should start with a letter and end with a letter or number"
+        }
+    },
+    "activityLogSetupEnabled":{
+      "type": "boolean"
+    },
+    "customRole":{
+      "type": "boolean"
+    },
+    "tenantId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "authType": {
+      "type": "string",
+      "enum": [
+        "CLI",
+        "PORTAL",
+        "USER_PASS"
+      ]
+    },
+    "complianceSetup": {
+      "type": "object",
+      "properties": {
+        "subscriptionId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "subscriptionId"
+      ],
+      "additionalProperties": false
+    },
+    "activityLogSetup": {
+      "type": "object",
+      "properties": {
+        "existingBucketName": {
+          "type": "string"
+        },
+        "existingResourceGroupName": {
+          "type": "string"
+        },
+        "activitySetupSubscriptionId": {
+          "type": "string",
+          "minLength": 1,
+          "message": {
+            "required": "Setup subscription Id is a required property"
+          }
+        },
+        "subscriptionId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "subscriptionId"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "complianceSetup",
+    "setupPrefix",
+    "activityLogSetupEnabled",
+    "authType",
+    "tenantId"
+  ]
+}

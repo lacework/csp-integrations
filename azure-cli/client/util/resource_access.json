@@ -1,0 +1,38 @@
+{
+  "Windows Azure Active Directory": {
+      "resourceAppId": "00000002-0000-0000-c000-000000000000",
+      "resourceAccess": [
+        {
+          "id": "5778995a-e1bf-45b8-affa-663a9f3f4d04",
+          "type": "Role"
+        }
+    ]
+  },
+  "Microsoft Graph": {
+    "resourceAppId": "00000003-0000-0000-c000-000000000000",
+    "resourceAccess": [
+      {
+        "id": "df021288-bdef-4463-88db-98f22de89214",
+        "type": "Role"
+      }
+    ]
+  },
+  "Azure Key Vault": {
+    "resourceAppId": "cfa8b339-82a2-471a-a3c9-0fc0be7a4093",
+    "resourceAccess": [
+      {
+        "id": "f53da476-18e3-4152-8e01-aec403e6edc0",
+        "type": "Scope"
+      }
+    ]
+  },
+  "Azure Storage": {
+    "resourceAppId": "e406a681-f3d4-42a8-90b6-c2b029497af1",
+    "resourceAccess": [
+      {
+        "id": "03e0da56-190b-40ad-a80c-ea378c433f7f",
+        "type": "Scope"
+      }
+    ]
+  }
+}
