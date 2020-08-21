@@ -1,0 +1,9 @@
+activityLogSetup:
+  subscriptionId: dddd
+activityLogSetupEnabled: true
+authType: CLI
+complianceSetup:
+  allSubscriptions: false
+  subscriptionId: dddd
+setupPrefix: dev
+tenantId: dddd

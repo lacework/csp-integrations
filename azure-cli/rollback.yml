@@ -1,0 +1,20 @@
+!!python/object:client.config.rollback.Rollback
+appId: dddd
+assignedCustomRole: false
+assignedReaderRole: false
+createdApp: false
+createdCustomRole: false
+createdEventGridSub: false
+createdLogProfile: false
+createdQueue: false
+createdResourceGroup: false
+createdServicePrincipal: false
+createdStorageAccount: false
+eventSubName: dddd
+logProfileName: dddd
+queueName: dddd
+resourceGroupName: dddd
+roleDefinitionName: dddd
+setKeyVaultPolicy: false
+storageAccountName: dddd
+subscriptionId: dddd
