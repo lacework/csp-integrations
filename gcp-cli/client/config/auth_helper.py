@@ -1,3 +1,6 @@
+from __future__ import print_function
+from builtins import str
+from builtins import object
 import google
 from google.oauth2 import service_account
 import logging
@@ -14,7 +17,7 @@ class AuthHelper(object):
             credentials = AuthHelper.getCredentialsFileData(CREDENTIALS_FILE_PATH)
             return credentials
         except Exception as e:
-            print "Could not authenticate using application default credentials and no credentials file found"
+            print("Could not authenticate using application default credentials and no credentials file found")
             logging.exception(
                 "Could not authenticate using application default credentials and no credentials file found")
             exit(1)
@@ -28,7 +31,7 @@ class AuthHelper(object):
                 return service_account.Credentials.from_service_account_info(credentials_data,
                                                                              scopes=SCOPES)
             except Exception as e:
-                print "Error reading credentials File" + str(e)
+                print("Error reading credentials File" + str(e))
                 logging.exception("Error reading credentials File", e)
                 exit(1)
         else:
@@ -36,7 +39,7 @@ class AuthHelper(object):
                 credentials, project = google.auth.default(SCOPES)
                 return credentials
             except Exception as e:
-                print "Could not authenticate using application default credentials and no credentials file found"
+                print("Could not authenticate using application default credentials and no credentials file found")
                 logging.exception(
                     "Could not authenticate using application default credentials and no credentials file found")
                 exit(1)

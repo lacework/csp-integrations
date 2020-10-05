@@ -1,3 +1,6 @@
+from __future__ import absolute_import
+from builtins import str
+from builtins import range
 import logging
 GET_ORG_IAM_POLICY="https://cloudresourcemanager.googleapis.com/v1/organizations/%orgId:getIamPolicy"
 GET_PROJECT_IAM_POLICY="https://cloudresourcemanager.googleapis.com/v1/projects/%projectId:getIamPolicy"
@@ -14,7 +17,7 @@ HTTP_GET_METHOD = "GET"
 HTTP_POST_METHOD = "POST"
 HTTP_PUT_METHOD = "PUT"
 SERVICE_ACCOUNT_ID = "lacework-cfg-sa"
-from util_base import UtilBase
+from .util_base import UtilBase
 import time
 SLEEP_SECS = 15
 

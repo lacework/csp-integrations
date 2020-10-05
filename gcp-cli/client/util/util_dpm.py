@@ -1,6 +1,10 @@
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import input
+from builtins import str
 import logging
-from util_base import UtilBase
-import util_template
+from .util_base import UtilBase
+from . import util_template
 
 HTTP_GET_METHOD = "GET"
 HTTP_POST_METHOD = "POST"
@@ -48,7 +52,7 @@ class UtilDpm(UtilBase):
             elif (deployment["operation"]["status"] == "RUNNING"):
                 if (deployment["operation"]["operationType"] == "insert"):
                     logging.info("Deployment is running! Sleeping for " + str(SLEEP_SECS) + " seconds before checking again")
-                    print "Deployment is running! Sleeping for " + str(SLEEP_SECS) + " seconds before checking again"
+                    print("Deployment is running! Sleeping for " + str(SLEEP_SECS) + " seconds before checking again")
                     time.sleep(SLEEP_SECS)
                 else:
                     raise Exception("The deployment with name " + deploymentName + " is being used or being deleted, please wait until all operations are done!")
@@ -170,12 +174,12 @@ class UtilDpm(UtilBase):
             resources = resources.replace("%resourceId", projectId)
 
 
-        print resources
-        print "Please review the above configuration to be deployed"
+        print(resources)
+        print("Please review the above configuration to be deployed")
         if config.getToIntegrate():
-            print "This deployment will be integrated with following lacework account: " + config.getLaceworkAccount()
+            print("This deployment will be integrated with following lacework account: " + config.getLaceworkAccount())
         while (True):
-            userInput = raw_input("Accept? (Y/N): ")
+            userInput = input("Accept? (Y/N): ")
             userInput = userInput.lower()
 
             if (userInput == "n" or userInput == "no"):

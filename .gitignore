@@ -23,3 +23,5 @@ azure-cfg-cli/env/
 *.log
 */credentials.txt
 #End of eclipse and jooq config files
+venv/
+.vscode/

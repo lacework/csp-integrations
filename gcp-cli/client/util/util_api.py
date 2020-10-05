@@ -1,4 +1,6 @@
-from util_base import UtilBase
+from __future__ import absolute_import
+from builtins import str
+from .util_base import UtilBase
 import logging
 
 DISABLE_API = "https://serviceusage.googleapis.com/v1/projects/%projectId/services/%serviceId:disable"

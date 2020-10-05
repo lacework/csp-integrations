@@ -1,3 +1,5 @@
+from builtins import str
+from builtins import object
 from google.auth.transport.requests import AuthorizedSession
 import json
 

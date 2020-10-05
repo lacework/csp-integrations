@@ -1,3 +1,4 @@
+from builtins import object
 API_LIST = [
     "serviceusage.googleapis.com",
     "pubsub.googleapis.com",

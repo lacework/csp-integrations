@@ -1,19 +1,26 @@
-from helpers import filePathInput
-from helpers import yesNoInput
-from util.util import Util
+from __future__ import print_function
+from __future__ import absolute_import
+from future import standard_library
+standard_library.install_aliases()
+from builtins import input
+from builtins import str
+from builtins import range
+from .helpers import filePathInput
+from .helpers import yesNoInput
+from .util.util import Util
 import csv
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 def readId(idType):
     while True:
-        readFrom = raw_input("Do you want to read " + idType.lower() + " IDs from a file or from GCP? (File/Gcp): \n")
+        readFrom = input("Do you want to read " + idType.lower() + " IDs from a file or from GCP? (File/Gcp): \n")
         readFrom = readFrom.lower()
         if readFrom == "file":
             return readFromFile(idType)
         elif readFrom == "gcp":
             return readFromGcp(idType)
         else:
-            print "Enter valid input."
+            print("Enter valid input.")
 
 def readFromFile(idType):
     while True:
@@ -21,7 +28,7 @@ def readFromFile(idType):
         if yesOrNo == "y" or yesOrNo == "yes":
             return readFromCsv(idType)
         else:
-            print "Reformat the CSV file to the correct format."
+            print("Reformat the CSV file to the correct format.")
 
 def readFromCsv(idType):
     filePath = filePathInput("Enter the full directory path to the " + idType.lower() + " IDs CSV file:\n")
@@ -50,25 +57,25 @@ def readFromGcp(idType):
         return getProjectsFromGcp(util, "The following projects will be loaded: \n")
     elif idType == "FOLDER":
         while True:
-            parentType = raw_input("Enter parent type for folders you want to get? (Organization/Folder): \n")
+            parentType = input("Enter parent type for folders you want to get? (Organization/Folder): \n")
             parentType = parentType.lower() + "s"
             if parentType == "organizations" or parentType == "folders":
                 while True:
-                    parentId = raw_input("Enter " + parentType + " id: \n")
+                    parentId = input("Enter " + parentType + " id: \n")
                     if " " in parentId or parentId == "":
-                        print "Enter valid input. "
+                        print("Enter valid input. ")
                         continue
                     parent = parentType + "/" + parentId
                     break
             else:
-                print "Enter valid input."
+                print("Enter valid input.")
                 continue
             yesOrNo = yesNoInput("Parent defined as: " + parent + "\nIs that correct? (Y/N): \n")
             if yesOrNo == "y" or yesOrNo == "yes":
-                parent = urllib.quote(parent)
+                parent = urllib.parse.quote(parent)
                 folderList = util.getFolderList(parent)
                 if folderList is None:
-                    print "No folders found, reenter the parent or check if you have proper permissions for folders or parent you are looking for!"
+                    print("No folders found, reenter the parent or check if you have proper permissions for folders or parent you are looking for!")
                     continue
                 else:
                     folderNames = [str(folder['displayName']) for folder in folderList]
@@ -83,16 +90,16 @@ def getProjectsFromGcp(util, finalMsg):
         filter = ""
         yesOrNo = yesNoInput("Do you want to filter the project list? (Y/N):\n")
         if yesOrNo == "y" or yesOrNo == "yes":
-            filterName = raw_input("Filter by name? Example: \nproject1: searches for exact string\nproject*: searches for projects containing string \n(If you do not want a filter, just enter return.): \n")
-            if filterName is not " " and filterName is not "":
+            filterName = input("Filter by name? Example: \nproject1: searches for exact string\nproject*: searches for projects containing string \n(If you do not want a filter, just enter return.): \n")
+            if filterName != " " and filterName != "":
                 filter = filter + "name:" + filterName + " "
-            filterId = raw_input("Filter by ID? Example: \nproject1: searches for the exact string\nproject*: searches for projects containing the string \n(If you do not want a filter, just enter return.): \n")
-            if filterId is not " " and filterId is not "":
+            filterId = input("Filter by ID? Example: \nproject1: searches for the exact string\nproject*: searches for projects containing the string \n(If you do not want a filter, just enter return.): \n")
+            if filterId != " " and filterId != "":
                 filter = filter + "id:" + filterId + " "
-            filterLabel = raw_input("Filter projects by labels? (If you do not want a filter, just enter return.): \n")
-            if filterLabel is not " " and filterLabel is not "":
-                filterLabelValue = raw_input("For " + filterLabel + " do you want to also filter by value? (If you do not want a filter, just enter return.): \n")
-                if filterLabelValue is not " " and filterLabelValue is not "":
+            filterLabel = input("Filter projects by labels? (If you do not want a filter, just enter return.): \n")
+            if filterLabel != " " and filterLabel != "":
+                filterLabelValue = input("For " + filterLabel + " do you want to also filter by value? (If you do not want a filter, just enter return.): \n")
+                if filterLabelValue != " " and filterLabelValue != "":
                     filter = filter + "labels." + filterLabel  + ":" + filterLabelValue + " "
                 else:
                     filter = filter + "labels." + filterLabel  + ":* "
@@ -101,31 +108,31 @@ def getProjectsFromGcp(util, finalMsg):
                 continue
             yesOrNo = yesNoInput("The following filters have been defined: \n" + filter + "\nIs that correct? (Y/N): \n")
             if yesOrNo == "n" or yesOrNo == "no":
-                print "Reenter your filters!"
+                print("Reenter your filters!")
                 continue
 
             filter = filter[:-1]
-            filter = urllib.quote(filter)
+            filter = urllib.parse.quote(filter)
             projectList = util.getProjectList(filter)
             if projectList is None:
-                print "No projects found, reenter your filters or check if you have the required permissions for projects you are searching for!"
+                print("No projects found, reenter your filters or check if you have the required permissions for projects you are searching for!")
             else:
                 projectIds = [str(project['projectId']) for project in projectList]
-                print finalMsg
+                print(finalMsg)
                 for i in range(1, len(projectIds)+1):
-                    print str(i) + ". " + projectIds[i-1]
+                    print(str(i) + ". " + projectIds[i-1])
                 yesOrNo = yesNoInput("\nConfirm Projects? (Y/N): \n")
                 if yesOrNo == "y" or yesOrNo == "yes":
                     return projectIds
         elif yesOrNo == "n" or yesOrNo == "no":
             projectList = util.getProjectList()
             if projectList is None:
-                print "No projects found, reenter your filters or check if you have the required permissions for projects you are searching for!"
+                print("No projects found, reenter your filters or check if you have the required permissions for projects you are searching for!")
             else:
                 projectIds = [str(project['projectId']) for project in projectList]
-                print finalMsg
+                print(finalMsg)
                 for i in range(1, len(projectIds)+1):
-                    print str(i) + ". " + projectIds[i-1]
+                    print(str(i) + ". " + projectIds[i-1])
                 yesOrNo = yesNoInput("\nConfirm Projects? (Y/N): \n")
                 if yesOrNo == "y" or yesOrNo == "yes":
                     return projectIds

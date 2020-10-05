@@ -1,3 +1,5 @@
+from builtins import str
+from builtins import object
 from client.config.auth_helper import AuthHelper
 from client.config.client_helper import ClientHelper
 import logging
@@ -29,7 +31,7 @@ class UtilBase(object):
 
 
     def getProjectDetails(self, id):
-        if self.__projectDetails != None:
+        if self.__projectDetails is not None:
             return self.__projectDetails
 
         projectData = self.__get_Project_Details(PROJECT_ID_DESC_URL, id)
@@ -67,7 +69,7 @@ class UtilBase(object):
         else:
             url = url  + "?pageSize=100"
 
-        if filter is not None and filter is not "":
+        if filter is not None and filter != "":
             url = url + "&filter=" + filter
 
         projectData = googleClient.make_request(HTTP_GET_METHOD, url, None, None)
@@ -100,7 +102,7 @@ class UtilBase(object):
         else:
             url = url  + "?pageSize=100"
 
-        if parent is not None and parent is not "":
+        if parent is not None and parent != "":
             url = url + "&parent=" + parent
 
         folderData = googleClient.make_request(HTTP_GET_METHOD, url, None, None)
@@ -142,7 +144,7 @@ class UtilBase(object):
         else:
             url = url  + "?maxResults=100"
 
-        if projectId is not None and projectId is not "":
+        if projectId is not None and projectId != "":
             url = url + "&project=" + projectId
 
         bucketData = googleClient.make_request(HTTP_GET_METHOD, url, None, None)
