@@ -110,8 +110,10 @@ if __name__ == "__main__":
                 createLaceworkIntegration(deploymentOutput, config, util)
 
         except Exception as e:
+            print("Exception:", str(e))
             logging.exception(str(e))
     except Exception as e:
+        print("Exception:", str(e))
         logging.exception(str(e))
 
 
