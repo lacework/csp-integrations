@@ -1,3 +1,6 @@
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
 import json
 from jsonschema import validate
 import os, inspect

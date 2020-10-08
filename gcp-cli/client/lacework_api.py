@@ -1,6 +1,10 @@
-from helpers import filePathInput
-from config.config import BUCKET_ROLES
-from config.config import BUCKET_SINK_ROLES
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import input
+from builtins import str
+from .helpers import filePathInput
+from .config.config import BUCKET_ROLES
+from .config.config import BUCKET_SINK_ROLES
 import yaml
 import json
 import requests
@@ -61,20 +65,20 @@ def createLaceworkIntegration(deploymentOutput, config, util):
         util.setBucketIAMPolicy(config.getExistingBucketName(), deploymentOutputJson["clientEmail"], BUCKET_ROLES)
         util.setBucketIAMPolicy(config.getExistingBucketName(), sinkEmail, BUCKET_SINK_ROLES)
 
-    print "Compliance Integration Level\n" + deploymentOutputJson["idTypeCompliance"]
-    print "Compliance ID\n" + deploymentOutputJson["idCompliance"]
-    print "Client Email \n" + deploymentOutputJson["clientEmail"]
-    print "Client Id \n" + deploymentOutputJson["clientId"]
-    print "Private Key Id \n" + deploymentOutputJson["privateKeyId"]
-    print "Private Key \n" + deploymentOutputJson["privateKey"]
+    print("Compliance Integration Level\n" + deploymentOutputJson["idTypeCompliance"])
+    print("Compliance ID\n" + deploymentOutputJson["idCompliance"])
+    print("Client Email \n" + deploymentOutputJson["clientEmail"])
+    print("Client Id \n" + deploymentOutputJson["clientId"])
+    print("Private Key Id \n" + deploymentOutputJson["privateKeyId"])
+    print("Private Key \n" + deploymentOutputJson["privateKey"])
 
     if config.isAuditLogSetup():
-        print "Audit Logging Integration Level\n" + deploymentOutputJson["idTypeAudit"]
-        print "Audit Logging ID\n" + deploymentOutputJson["idAudit"]
+        print("Audit Logging Integration Level\n" + deploymentOutputJson["idTypeAudit"])
+        print("Audit Logging ID\n" + deploymentOutputJson["idAudit"])
         if config.doesBucketExist():
-            print "Subscription Name: \nSame as when script was run for existing bucket \n"
+            print("Subscription Name: \nSame as when script was run for existing bucket \n")
         else:
-            print "Subscription Name \n" + deploymentOutputJson["subscription"]
+            print("Subscription Name \n" + deploymentOutputJson["subscription"])
 
     if (config.getToIntegrate()):
         createIntegration(deploymentOutputJson, config)
@@ -105,10 +109,10 @@ def createIntegration(deploymentJson, config):
     if response.status_code >= 200 and response.status_code <= 299:
         if responseJson['ok']:
             logging.info("The integration for compliance has been created in Lacework!")
-            print "The integration for compliance has been created in Lacework!"
+            print("The integration for compliance has been created in Lacework!")
             # TODO: Uncomment when lacework api is tested
             logging.info("Running report for integration in " + str(SLEEP_SECS) + " seconds!")
-            print "Running report for integration in " + str(SLEEP_SECS) + " seconds!"
+            print("Running report for integration in " + str(SLEEP_SECS) + " seconds!")
             time.sleep(SLEEP_SECS)
             intgGuid = str(responseJson["data"][0]["INTG_GUID"])
             url = LACEWORK_RUN_REPORT.replace("%laceworkAccount", config.getLaceworkAccount())
@@ -117,7 +121,7 @@ def createIntegration(deploymentJson, config):
             responseJson = response.json()
             if response.status_code >= 200 and response.status_code <= 299:
                 logging.info("Compliance report is running!")
-                print "Compliance report is running!"
+                print("Compliance report is running!")
             else:
                 print ("Report for created integration could not be run, please run it manually: \n" + str(responseJson))
         else:
@@ -149,7 +153,7 @@ def createIntegration(deploymentJson, config):
         if response.status_code >= 200 and response.status_code <= 299:
             if responseJson['ok']:
                 logging.info("The integration for audit logging has been created in Lacework!")
-                print "The integration for audit logging has been created in Lacework!"
+                print("The integration for audit logging has been created in Lacework!")
             else:
                 raise Exception("The Lacework integration for audit could not be created: \n" + str(responseJson))
         else:
@@ -163,14 +167,14 @@ def getToken():
     while True:
         secretKey = getpass.getpass("Enter the secret key for your Lacework application: \n")
         if " " in secretKey or secretKey is "":
-            print "Enter a valid secret key."
+            print("Enter a valid secret key.")
         else:
             break
 
     while True:
-        laceworkAccount = raw_input("Enter your Lacework application where you want to create the integration(s). Just specify the myLacework part of the Lacework application URL: myLacework.lacework.net.\n")
+        laceworkAccount = input("Enter your Lacework application where you want to create the integration(s). Just specify the myLacework part of the Lacework application URL: myLacework.lacework.net.\n")
         if " " in laceworkAccount or laceworkAccount is "":
-            print "Enter a Lacework application:"
+            print("Enter a Lacework application:")
         else:
             break
 
@@ -196,9 +200,9 @@ def getToken():
 def getSchema(token, laceworkAccount):
     if laceworkAccount is None:
         while True:
-            laceworkAccount = raw_input("Enter your Lacework application where you want to create the integration(s). Just specify the myLacework part of the Lacework application URL: myLacework.lacework.net. \n")
+            laceworkAccount = input("Enter your Lacework application where you want to create the integration(s). Just specify the myLacework part of the Lacework application URL: myLacework.lacework.net. \n")
             if " " in laceworkAccount or laceworkAccount is "":
-                print "Enter a valid Lacework application."
+                print("Enter a valid Lacework application.")
             else:
                 break
 

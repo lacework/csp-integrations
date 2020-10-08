@@ -1,3 +1,6 @@
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import str
 from client.util.util import Util
 from client.checks import runDependentChecks
 from client.checks import runIndependentChecks
@@ -55,12 +58,12 @@ if __name__ == "__main__":
                 json.dump({"configFile":configFile, "toEnable":toEnable}, checksFile)
 
 ############################################## ENABLING API NEEDED TO RUN DEPENDENT TESTS ################################################################
-            if len(toEnable) is not 0:
+            if len(toEnable) != 0:
                 logging.info("Enabling needed api in setup project")
                 # If the project is new we need to enable api manually for the deployment to work properly
                 util.enableApi(setupProjectId, toEnable)
                 while True:
-                    print "Needed API are being enabled, sleeping script for 30 seconds before moving forward!"
+                    print("Needed API are being enabled, sleeping script for 30 seconds before moving forward!")
                     time.sleep(SLEEP_SECS)
                     if len(checkApiEnablement(setupProjectId, util)) == 0:
                         break
@@ -82,11 +85,11 @@ if __name__ == "__main__":
                 logging.info("Setting proper IAM policies for setup project")
                 # The project requires sepcific IAM roles to deploy and create the resources
                 util.setIAMPolicy(setupProjectId, googleServiceAccount, "PROJECT", rolesProject)
-                if len(rolesOrg) is not 0:
+                if len(rolesOrg) != 0:
                     logging.info("Setting proper IAM policies for organization level integration")
                     # If someone wants organization level integration we would need extra permissions
                     util.setIAMPolicy(config.getComplianceSetupId(), googleServiceAccount, config.getComplianceSetupType(), rolesOrg)
-                if len(rolesAudit) is not 0:
+                if len(rolesAudit) != 0:
                     for entry in rolesAudit:
                         logging.info("IAM policies being set for: " + entry['id'])
                         # Each audit log project, folder or organization needs to give logging role so service account
@@ -99,7 +102,7 @@ if __name__ == "__main__":
                 logging.info("Checking created deployment status")
                 deploymentOutput = util.deploymentWait(setupProjectId, deploymentName)
                 if deploymentOutput is None:
-                    print "Deployment Failed, Deleting created resources and rolling back script"
+                    print("Deployment Failed, Deleting created resources and rolling back script")
                     time.sleep(SLEEP_SECS)
                     rollbackScript()
                     raise Exception("Deployment failed with above error!\n")
@@ -107,8 +110,10 @@ if __name__ == "__main__":
                 createLaceworkIntegration(deploymentOutput, config, util)
 
         except Exception as e:
+            print("Exception:", str(e))
             logging.exception(str(e))
     except Exception as e:
+        print("Exception:", str(e))
         logging.exception(str(e))
 
 
